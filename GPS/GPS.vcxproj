@@ -115,10 +115,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GPS.cpp" />
+    <ClInclude Include="GPS.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GPS.h" />
+    <ClCompile Include="GPS.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
