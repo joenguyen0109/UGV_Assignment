@@ -10,9 +10,9 @@ int main() {
 	int PortNumber = 24000;
 	TcpClient^ Client;
 	array<unsigned char>^ ReadData;
-	//String^ ResponseData;
+	String^ ResponseData;
 
-	Client = gcnew TcpClient("(192.168.1.200", PortNumber);
+	Client = gcnew TcpClient("192.168.1.200", PortNumber);
 	// Configure connection
 	Client->NoDelay = true;
 	Client->ReceiveTimeout = 500;//ms
@@ -21,11 +21,20 @@ int main() {
 	Client->SendBufferSize = 1024;
 	//Loop
 	NetworkStream^ Stream = Client->GetStream();
+	Console::WriteLine("Hello world");
+	ReadData = gcnew array<unsigned char>(84);
 	while (!_kbhit())
 	{
-		Console::WriteLine("Running");
+
+		Threading::Thread::Sleep(3000);
+		Console::WriteLine("---------");
+
 		Stream->Read(ReadData, 0, ReadData->Length);
-		Console::WriteLine(ReadData);
+		Console::WriteLine(System::BitConverter::ToString(ReadData));
+		Console::WriteLine(System::BitConverter::ToSingle(ReadData, 48));
+		Console::WriteLine(System::BitConverter::ToSingle(ReadData, 52));
+		Console::WriteLine(System::BitConverter::ToSingle(ReadData, 56));
+
 	}
 	Stream->Close();
 	Client->Close();
