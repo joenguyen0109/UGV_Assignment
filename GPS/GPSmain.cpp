@@ -1,4 +1,3 @@
-#include "GPS.h"
 #using <System.dll>
 #include <conio.h>//_kbhit()
 using namespace System;
@@ -26,7 +25,7 @@ int main() {
 	while (!_kbhit())
 	{
 
-		Threading::Thread::Sleep(3000);
+		Threading::Thread::Sleep(1000);
 		Console::WriteLine("---------");
 
 		Stream->Read(ReadData, 0, ReadData->Length);
