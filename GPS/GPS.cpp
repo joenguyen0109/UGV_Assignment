@@ -14,7 +14,7 @@ int GPS::connect(String^ hostName, int portNumber)
 		Client->ReceiveBufferSize = 1024;
 		Client->SendBufferSize = 1024;
 		Stream = Client->GetStream();
-		ReadData = gcnew array<unsigned char>(112);
+		ReadData = gcnew array<Byte>(112);
 	}
 	catch (const std::exception&)
 	{
@@ -48,13 +48,28 @@ int GPS::checkData()
 {
 	// YOUR CODE HERE
 	unsigned long checksum = CRC32Value(BitConverter::ToInt32(ReadData, 108));
-	//unsigned char s[80];
-	//int k = 28;
-	//for (int i = 0; i < 80; i++) {
-	//	s[i] = ReadData[k + i];
-	//}
-	pin_ptr<unsigned char>buff = &ReadData[0];
-	Console::WriteLine(checksum == CalculateBlockCRC32(80,buff));
+	array<Byte>^ copy = gcnew array<Byte>(81);
+	Array::Copy(ReadData, 28, copy, 0, 80);
+	copy[80] = '\0';
+	pin_ptr<Byte>buff = &copy[0];
+	unsigned char* cp = buff;
+	printf_s("%s\n", cp);
+	unsigned long checksum2 = CalculateBlockCRC32(81, cp);
+	std::cout << checksum << "\n";
+	std::cout << checksum2 << "\n";
+	std::cout << "-------------" << "\n";
+	//array<Byte>^ arr = gcnew array<Byte>(6);
+	//arr[0] = 'C';
+	//arr[1] = '+';
+	//arr[2] = '+';
+	//arr[3] = 's';
+	//arr[4] = 'd';
+	//arr[5] = '\0';
+	//pin_ptr<Byte> p = &arr[0];   // entire array is now pinned
+	//unsigned char* cp = p;
+
+	//printf_s("%s\n", cp); // bytes pointed at by cp
+						  // will not move during call
 	return 1;
 }
 int GPS::sendDataToSharedMemory() 

@@ -2,6 +2,7 @@
 #include <UGV_module.h>
 #include <smstructs.h>
 #using <System.dll>
+#include <stdio.h>
 #define CRC32_POLYNOMIAL 0xEDB88320L
 
 unsigned long CRC32Value(int i);
@@ -37,7 +38,7 @@ protected:
 	TcpClient^ Client;
 	NetworkStream^ Stream;
 	GPSData* dataPtr;
-	array<unsigned char>^ ReadData;
+	array<Byte>^ ReadData;
 };
 
 

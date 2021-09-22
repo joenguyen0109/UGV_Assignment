@@ -13,7 +13,7 @@ int main() {
 	while (!_kbhit())
 	{
 
-		Threading::Thread::Sleep(1000);
+		Threading::Thread::Sleep(3000);
 		gps->getShutdownFlag();
 		gps->setHeartbeat(TRUE);
 		gps->getData();
