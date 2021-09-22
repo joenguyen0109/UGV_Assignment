@@ -14,6 +14,7 @@ int GPS::connect(String^ hostName, int portNumber)
 		Client->ReceiveBufferSize = 1024;
 		Client->SendBufferSize = 1024;
 		Stream = Client->GetStream();
+		ReadData = gcnew array<unsigned char>(112);
 	}
 	catch (const std::exception&)
 	{
@@ -35,17 +36,25 @@ int GPS::setupSharedMemory()
 int GPS::getData() 
 {
 	// YOUR CODE HERE
-	array<unsigned char>^ ReadData = gcnew array<unsigned char>(84);
+	
 	Stream->Read(ReadData, 0, ReadData->Length);
 	Console::WriteLine(BitConverter::ToString(ReadData));
-	Console::WriteLine(BitConverter::ToDouble(ReadData, 16));
-	Console::WriteLine(BitConverter::ToDouble(ReadData, 24));
-	Console::WriteLine(BitConverter::ToDouble(ReadData, 32));
+	//Console::WriteLine(BitConverter::ToDouble(ReadData, 16+28));
+	//Console::WriteLine(BitConverter::ToDouble(ReadData, 24+28));
+	//Console::WriteLine(BitConverter::ToDouble(ReadData, 32+28));
 	return 1;
 }
-int GPS::checkData() 
+int GPS::checkData()
 {
 	// YOUR CODE HERE
+	unsigned long checksum = CRC32Value(BitConverter::ToInt32(ReadData, 108));
+	//unsigned char s[80];
+	//int k = 28;
+	//for (int i = 0; i < 80; i++) {
+	//	s[i] = ReadData[k + i];
+	//}
+	pin_ptr<unsigned char>buff = &ReadData[0];
+	Console::WriteLine(checksum == CalculateBlockCRC32(80,buff));
 	return 1;
 }
 int GPS::sendDataToSharedMemory() 

@@ -37,7 +37,7 @@ protected:
 	TcpClient^ Client;
 	NetworkStream^ Stream;
 	GPSData* dataPtr;
-	GPSData* sharePtrData;
+	array<unsigned char>^ ReadData;
 };
 
 
