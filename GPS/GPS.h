@@ -1,5 +1,6 @@
 
 #include <UGV_module.h>
+
 #include <smstructs.h>
 #using <System.dll>
 #include <stdio.h>
@@ -25,6 +26,7 @@ ref class GPS : public UGV_module
 
 public:
 	int connect(String^ hostName, int portNumber) override;
+	int setupSharedMemory(SMObject&);
 	int setupSharedMemory() override;
 	int getData() override;
 	int checkData() override;
@@ -39,6 +41,7 @@ protected:
 	NetworkStream^ Stream;
 	GPSData* dataPtr;
 	array<Byte>^ ReadData;
+
 };
 
 

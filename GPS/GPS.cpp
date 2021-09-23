@@ -23,13 +23,15 @@ int GPS::connect(String^ hostName, int portNumber)
 	}
 	return 1;
 }
-int GPS::setupSharedMemory() 
+int GPS::setupSharedMemory(SMObject & GPSDataSMObj)
 {
-	SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(GPSData));
-	dataPtr = NULL;
-	GPSDataSMObj.SMCreate();
-	GPSDataSMObj.SMAccess();
 	dataPtr = (GPSData*)GPSDataSMObj.pData;
+	// YOUR CODE HERE
+	return 1;
+}
+int GPS::setupSharedMemory()
+{
+
 	// YOUR CODE HERE
 	return 1;
 }
@@ -39,9 +41,6 @@ int GPS::getData()
 	
 	Stream->Read(ReadData, 0, ReadData->Length);
 	Console::WriteLine(BitConverter::ToString(ReadData));
-	//Console::WriteLine(BitConverter::ToDouble(ReadData, 16+28));
-	//Console::WriteLine(BitConverter::ToDouble(ReadData, 24+28));
-	//Console::WriteLine(BitConverter::ToDouble(ReadData, 32+28));
 	return 1;
 }
 int GPS::checkData()
@@ -75,6 +74,9 @@ int GPS::checkData()
 int GPS::sendDataToSharedMemory() 
 {
 	// YOUR CODE HERE
+	dataPtr->X = BitConverter::ToDouble(ReadData, 16 + 28);
+	dataPtr->Y = BitConverter::ToDouble(ReadData, 24 + 28);
+	dataPtr->height = BitConverter::ToDouble(ReadData, 32 + 28);
 	return 1;
 }
 bool GPS::getShutdownFlag() 

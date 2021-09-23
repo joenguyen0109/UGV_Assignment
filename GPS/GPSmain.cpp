@@ -5,22 +5,26 @@
 int main() {
 	Console::WriteLine("Hello world");
 	int PortNumber = 24000;
-
+	SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(GPSData));
+	GPSDataSMObj.SMCreate();
+	GPSDataSMObj.SMAccess();
 	GPS^ gps = gcnew GPS();
 	gps->connect("192.168.1.200", PortNumber);
-	//Client = gcnew TcpClient("192.168.1.200", PortNumber);
-	gps->setupSharedMemory();
+	Threading::Thread::Sleep(3000);
+	gps->setupSharedMemory(GPSDataSMObj);
+	Threading::Thread::Sleep(3000);
 	while (!_kbhit())
 	{
 
-		Threading::Thread::Sleep(3000);
+
 		gps->getShutdownFlag();
 		gps->setHeartbeat(TRUE);
 		gps->getData();
-		gps->checkData();
-		gps->sendDataToSharedMemory();
-
-
+		if (gps->checkData() == 1) {
+			gps->sendDataToSharedMemory();
+		}
+		
+		Threading::Thread::Sleep(1000);
 
 	}
 	
