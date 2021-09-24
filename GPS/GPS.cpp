@@ -26,7 +26,6 @@ int GPS::connect(String^ hostName, int portNumber)
 int GPS::setupSharedMemory(SMObject & GPSDataSMObj)
 {
 	dataPtr = (GPSData*)GPSDataSMObj.pData;
-	// YOUR CODE HERE
 	return 1;
 }
 int GPS::setupSharedMemory()
@@ -41,22 +40,23 @@ int GPS::getData()
 	
 	Stream->Read(ReadData, 0, ReadData->Length);
 	Console::WriteLine(BitConverter::ToString(ReadData));
+	Console::WriteLine("-------------");
 	return 1;
 }
 int GPS::checkData()
 {
 	// YOUR CODE HERE
-	unsigned long checksum = CRC32Value(BitConverter::ToInt32(ReadData, 108));
-	array<Byte>^ copy = gcnew array<Byte>(81);
-	Array::Copy(ReadData, 28, copy, 0, 80);
-	copy[80] = '\0';
-	pin_ptr<Byte>buff = &copy[0];
-	unsigned char* cp = buff;
-	printf_s("%s\n", cp);
-	unsigned long checksum2 = CalculateBlockCRC32(81, cp);
-	std::cout << checksum << "\n";
-	std::cout << checksum2 << "\n";
-	std::cout << "-------------" << "\n";
+	//unsigned long checksum = CRC32Value(BitConverter::ToInt32(ReadData, 108));
+	//array<Byte>^ copy = gcnew array<Byte>(81);
+	//Array::Copy(ReadData, 28, copy, 0, 80);
+	//copy[80] = '\0';
+	//pin_ptr<Byte>buff = &copy[0];
+	//unsigned char* cp = buff;
+	//printf_s("%s\n", cp);
+	//unsigned long checksum2 = CalculateBlockCRC32(81, cp);
+	//std::cout << checksum << "\n";
+	//std::cout << checksum2 << "\n";
+	//std::cout << "-------------" << "\n";
 	//array<Byte>^ arr = gcnew array<Byte>(6);
 	//arr[0] = 'C';
 	//arr[1] = '+';
@@ -69,6 +69,16 @@ int GPS::checkData()
 
 	//printf_s("%s\n", cp); // bytes pointed at by cp
 						  // will not move during call
+
+	unsigned long crc = CRC32Value(BitConverter::ToInt32(ReadData, 108));
+	unsigned char data[80];
+	int k = 28;
+	for (int i = 0; i < 80; i++) {
+		data[i] = (unsigned char) ReadData[i + 28];
+	}
+	unsigned long calCRC = CalculateBlockCRC32(80, data);
+	Console::WriteLine(crc == calCRC);
+	
 	return 1;
 }
 int GPS::sendDataToSharedMemory() 
