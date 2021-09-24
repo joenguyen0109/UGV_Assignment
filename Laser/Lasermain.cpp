@@ -2,7 +2,7 @@
 #include <conio.h>//_kbhit()
 int main() {
 	Console::WriteLine("Hello world");
-	int PortNumber = 24000;
+	int PortNumber = 23000;
 	SMObject LaserDataSMObj(_TEXT("LaserData"), sizeof(LaserData));
 	LaserDataSMObj.SMCreate();
 	LaserDataSMObj.SMAccess();

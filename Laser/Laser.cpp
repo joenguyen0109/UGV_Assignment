@@ -3,29 +3,22 @@
 
 int Laser::connect(String^ hostName, int portNumber)
 {
-	// YOUR CODE HERE
-	try
-	{
-		Client = gcnew TcpClient(hostName, portNumber);
-		// Configure connection
-		Client->NoDelay = true;
-		Client->ReceiveTimeout = 500;//ms
-		Client->SendTimeout = 500;//ms
-		Client->ReceiveBufferSize = 1024;
-		Client->SendBufferSize = 1024;
-		Stream = Client->GetStream();
-		ReadData = gcnew array<unsigned char>(2500);
-	}
-	catch (const std::exception&)
-	{
 
-		return 0;
-	}
+
+	Client = gcnew TcpClient(hostName, portNumber);
+	// Configure connection
+	Client->NoDelay = true;
+	Client->ReceiveTimeout = 500;//ms
+	Client->SendTimeout = 500;//ms
+	Client->ReceiveBufferSize = 1024;
+	Client->SendBufferSize = 1024;
+	Stream = Client->GetStream();
+	ReadData = gcnew array<unsigned char>(2500);
+
 	return 1;
 }
 int Laser::setupSharedMemory(SMObject& GPSDataSMObj)
 {
-	
 	dataPtr = (LaserData*)GPSDataSMObj.pData;
 	return 1;
 }
@@ -48,7 +41,6 @@ void Laser::sendData() {
 
 int Laser::getData()
 {
-	// YOUR CODE HERE
 
 	Stream->Read(ReadData, 0, ReadData->Length);
 	Console::WriteLine(BitConverter::ToString(ReadData));
