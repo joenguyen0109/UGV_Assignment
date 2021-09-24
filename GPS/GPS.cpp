@@ -40,6 +40,12 @@ int GPS::getData()
 	
 	Stream->Read(ReadData, 0, ReadData->Length);
 	Console::WriteLine(BitConverter::ToString(ReadData));
+	Console::WriteLine(BitConverter::ToDouble(ReadData, 16 + 28));
+	Console::WriteLine(BitConverter::ToDouble(ReadData, 24 + 28));
+	Console::WriteLine(BitConverter::ToDouble(ReadData, 32 + 28));
+	unsigned long crc = BitConverter::ToUInt32(ReadData, 108);
+	swap(crc);
+	std::cout << std::hex << crc << std::endl;
 	Console::WriteLine("-------------");
 	return 1;
 }
