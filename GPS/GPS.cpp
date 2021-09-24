@@ -45,41 +45,15 @@ int GPS::getData()
 }
 int GPS::checkData()
 {
-	// YOUR CODE HERE
-	//unsigned long checksum = CRC32Value(BitConverter::ToInt32(ReadData, 108));
-	//array<Byte>^ copy = gcnew array<Byte>(81);
-	//Array::Copy(ReadData, 28, copy, 0, 80);
-	//copy[80] = '\0';
-	//pin_ptr<Byte>buff = &copy[0];
-	//unsigned char* cp = buff;
-	//printf_s("%s\n", cp);
-	//unsigned long checksum2 = CalculateBlockCRC32(81, cp);
-	//std::cout << checksum << "\n";
-	//std::cout << checksum2 << "\n";
-	//std::cout << "-------------" << "\n";
-	//array<Byte>^ arr = gcnew array<Byte>(6);
-	//arr[0] = 'C';
-	//arr[1] = '+';
-	//arr[2] = '+';
-	//arr[3] = 's';
-	//arr[4] = 'd';
-	//arr[5] = '\0';
-	//pin_ptr<Byte> p = &arr[0];   // entire array is now pinned
-	//unsigned char* cp = p;
-
-	//printf_s("%s\n", cp); // bytes pointed at by cp
-						  // will not move during call
-
-	unsigned long crc = CRC32Value(BitConverter::ToInt32(ReadData, 108));
-	unsigned char data[80];
-	int k = 28;
-	for (int i = 0; i < 80; i++) {
-		data[i] = (unsigned char) ReadData[i + 28];
+	unsigned char data[108];
+	for (int i = 0; i < 108; i++) {
+		data[i] = ReadData[i];
 	}
-	unsigned long calCRC = CalculateBlockCRC32(80, data);
-	Console::WriteLine(crc == calCRC);
-	
-	return 1;
+	unsigned long crc = CalculateBlockCRC32(108, data);
+	if (crc == BitConverter::ToUInt32(ReadData, 108)) {
+		return 1;
+	}
+	return 0;
 }
 int GPS::sendDataToSharedMemory() 
 {
@@ -87,6 +61,7 @@ int GPS::sendDataToSharedMemory()
 	dataPtr->X = BitConverter::ToDouble(ReadData, 16 + 28);
 	dataPtr->Y = BitConverter::ToDouble(ReadData, 24 + 28);
 	dataPtr->height = BitConverter::ToDouble(ReadData, 32 + 28);
+	std::cout << "Write to share memory" << std::endl;
 	return 1;
 }
 bool GPS::getShutdownFlag() 
@@ -121,7 +96,8 @@ unsigned long CRC32Value(int i)
 	return ulCRC;
 }
 
-unsigned long CalculateBlockCRC32(unsigned long ulCount, /* Number of bytes in the data block */
+unsigned long CalculateBlockCRC32(
+	unsigned long ulCount, /* Number of bytes in the data block */
 	unsigned char* ucBuffer) /* Data block */
 {
 	unsigned long ulTemp1;
@@ -134,4 +110,11 @@ unsigned long CalculateBlockCRC32(unsigned long ulCount, /* Number of bytes in t
 		ulCRC = ulTemp1 ^ ulTemp2;
 	}
 	return(ulCRC);
+}
+
+void swap(unsigned long& val) {
+	val = ((val << 24) & 0xFF000000) |
+		((val << 8) & 0x00FF0000) |
+		((val >> 8) & 0x0000FF00) |
+		((val >> 24) & 0x000000FF);
 }
