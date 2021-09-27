@@ -5,7 +5,7 @@
 int main() {
 	Console::WriteLine("Hello world");
 	int PortNumber = 24000;
-	SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(GPSData));
+	SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(SM_GPS));
 	GPSDataSMObj.SMCreate();
 	GPSDataSMObj.SMAccess();
 	GPS^ gps = gcnew GPS();

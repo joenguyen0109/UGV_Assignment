@@ -14,12 +14,7 @@ using namespace System::Net::Sockets;
 using namespace System::Net;
 using namespace System::Text; 
 
-struct GPSData {
-	double X;
-	double Y;
-	double height;
-};
-
+ 
 
 ref class GPS : public UGV_module
 {
@@ -40,7 +35,7 @@ protected:
 	// YOUR CODE HERE (ADDITIONAL MEMBER VARIABLES THAT YOU MAY WANT TO ADD)
 	TcpClient^ Client;
 	NetworkStream^ Stream;
-	GPSData* dataPtr;
+	SM_GPS* dataPtr;
 	array<Byte>^ ReadData;
 
 };

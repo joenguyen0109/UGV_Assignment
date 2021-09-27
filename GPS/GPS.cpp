@@ -25,7 +25,7 @@ int GPS::connect(String^ hostName, int portNumber)
 }
 int GPS::setupSharedMemory(SMObject & GPSDataSMObj)
 {
-	dataPtr = (GPSData*)GPSDataSMObj.pData;
+	dataPtr = (SM_GPS*)GPSDataSMObj.pData;
 	return 1;
 }
 int GPS::setupSharedMemory()
@@ -64,8 +64,8 @@ int GPS::checkData()
 int GPS::sendDataToSharedMemory() 
 {
 	// YOUR CODE HERE
-	dataPtr->X = BitConverter::ToDouble(ReadData, 16 + 28);
-	dataPtr->Y = BitConverter::ToDouble(ReadData, 24 + 28);
+	dataPtr->northing = BitConverter::ToDouble(ReadData, 16 + 28);
+	dataPtr->easting = BitConverter::ToDouble(ReadData, 24 + 28);
 	dataPtr->height = BitConverter::ToDouble(ReadData, 32 + 28);
 	std::cout << "Write to share memory" << std::endl;
 	return 1;
