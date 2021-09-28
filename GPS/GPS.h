@@ -23,7 +23,7 @@ ref class GPS : public UGV_module
 public:
 	int connect(String^ hostName, int portNumber) override;
 	int setupSharedMemory(SMObject&, SMObject&);
-	bool checkHeartBeat();
+	bool checkHeartBeat(long timestamp);
 	int setupSharedMemory() override;
 	int getData() override;
 	int checkData() override;

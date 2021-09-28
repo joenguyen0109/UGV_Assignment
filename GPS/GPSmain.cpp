@@ -10,11 +10,9 @@ int main() {
 	SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(SM_GPS));
 	GPSDataSMObj.SMCreate();
 	GPSDataSMObj.SMAccess();
-
 	SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
 	MonitorDataSMObj.SMCreate();
 	MonitorDataSMObj.SMAccess();
-
 	gps->setupSharedMemory(GPSDataSMObj, MonitorDataSMObj);
 	Threading::Thread::Sleep(100);
 
@@ -23,11 +21,17 @@ int main() {
 	//gps->connect("192.168.1.200", PortNumber);
 	Threading::Thread::Sleep(1000);
 
+	// timeStamp
+	double timeStamp;
+	__int64 frequency, counter;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 
 
 	while (!_kbhit())
 	{
-		if (gps->checkHeartBeat()) {
+		QueryPerformanceCounter((LARGE_INTEGER*)&counter);
+		long timestamp = (long)counter / (long)frequency * 1000;
+		if (gps->checkHeartBeat(timestamp)) {
 			break;
 		}
 		//gps->getShutdownFlag();

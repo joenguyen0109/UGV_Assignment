@@ -24,19 +24,15 @@ int main() {
 	SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
 	MonitorDataSMObj.SMCreate();
 	MonitorDataSMObj.SMAccess();
-
-	SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(SM_GPS));
-	GPSDataSMObj.SMCreate();
-	GPSDataSMObj.SMAccess();
-
 	ProcessManagement* dataPointer = (ProcessManagement*)MonitorDataSMObj.pData;
-
-	
-
 	dataPointer->Heartbeat.Status = 0;
 	dataPointer->Shutdown.Status = 0;
+	dataPointer->LifeCounter = 0;
 
 
+	double timeStamp;
+	__int64 frequency, counter;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 
 	for (int i = 0; i < moduleList->Length; i++) {
 		if (Process::GetProcessesByName(moduleList[i]->getName())->Length == 0) {
@@ -48,12 +44,14 @@ int main() {
 	}
 
 	bool shutdown = false;
+
 	while (!_kbhit()) {
+		QueryPerformanceCounter((LARGE_INTEGER*)&counter);
+		dataPointer->LifeCounter = (long)counter / (long)frequency * 1000;
 		for (int i = 0; i < 5; i++) {
 			if ((dataPointer->Heartbeat.Status >> i) & 1) {
 				dataPointer->Heartbeat.Status &= ~(1UL << i);
 				moduleList[i]->setCount();
-				// reset count
 			}else {
 				int value = moduleList[i]->handelHeartBeat();
 				if (value == 1) {

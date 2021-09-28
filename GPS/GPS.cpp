@@ -26,25 +26,22 @@ int GPS::connect(String^ hostName, int portNumber)
 int GPS::setupSharedMemory(SMObject & GPSDataSMObj, SMObject& MonitorDataSMObj)
 {
 	dataPtr = (SM_GPS*)GPSDataSMObj.pData;
-
-
-
 	hearbeatPointer = (ProcessManagement*)MonitorDataSMObj.pData;
-
-
 	return 1;
 }
 
-bool GPS::checkHeartBeat() {
+bool GPS::checkHeartBeat(long timestamp) {
+	long differenceTimeStamp = timestamp - hearbeatPointer->LifeCounter;
 	if (hearbeatPointer->Shutdown.Status != 0xFF) {
 		int hearBeat = (hearbeatPointer->Heartbeat.Status >> 2) & 1;
 		if (!hearBeat) {
 			hearbeatPointer->Heartbeat.Status |= 1UL << 2;
-			Console::WriteLine("Flip");
 		}
 		else {
 			//check timestamp
-
+			if (differenceTimeStamp > 5000) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -52,14 +49,10 @@ bool GPS::checkHeartBeat() {
 }
 int GPS::setupSharedMemory()
 {
-
-	// YOUR CODE HERE
 	return 1;
 }
 int GPS::getData() 
 {
-	// YOUR CODE HERE
-	
 	Stream->Read(ReadData, 0, ReadData->Length);
 	Console::WriteLine(BitConverter::ToString(ReadData));
 	Console::WriteLine(BitConverter::ToDouble(ReadData, 16 + 28));
@@ -89,7 +82,6 @@ int GPS::sendDataToSharedMemory()
 	dataPtr->northing = BitConverter::ToDouble(ReadData, 16 + 28);
 	dataPtr->easting = BitConverter::ToDouble(ReadData, 24 + 28);
 	dataPtr->height = BitConverter::ToDouble(ReadData, 32 + 28);
-	std::cout << "Write to share memory" << std::endl;
 	return 1;
 }
 bool GPS::getShutdownFlag() 
