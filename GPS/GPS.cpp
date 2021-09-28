@@ -23,10 +23,32 @@ int GPS::connect(String^ hostName, int portNumber)
 	}
 	return 1;
 }
-int GPS::setupSharedMemory(SMObject & GPSDataSMObj)
+int GPS::setupSharedMemory(SMObject & GPSDataSMObj, SMObject& MonitorDataSMObj)
 {
 	dataPtr = (SM_GPS*)GPSDataSMObj.pData;
+
+
+
+	hearbeatPointer = (ProcessManagement*)MonitorDataSMObj.pData;
+
+
 	return 1;
+}
+
+bool GPS::checkHeartBeat() {
+	if (hearbeatPointer->Shutdown.Status != 0xFF) {
+		int hearBeat = (hearbeatPointer->Heartbeat.Status >> 2) & 1;
+		if (!hearBeat) {
+			hearbeatPointer->Heartbeat.Status |= 1UL << 2;
+			Console::WriteLine("Flip");
+		}
+		else {
+			//check timestamp
+
+		}
+		return false;
+	}
+	return true;
 }
 int GPS::setupSharedMemory()
 {

@@ -12,22 +12,22 @@ using namespace System::Threading;
 
 int main() {
 	std::cout << "PM \n";
-	Program^ GPS = gcnew Program("GPS", false, 20);
-	Program^ Laser = gcnew Program("Laser", true, 10);
-	Program^ VehicleControl = gcnew Program("VehicleControl", true, 10);
-	Program^ Camera = gcnew Program("Camera", true, 10);
-	Program^ Display = gcnew Program("Display", false, 20);
+	Program^ GPS = gcnew Program("GPS", false, 5);
+	Program^ Laser = gcnew Program("Laser", true, 10000);
+	Program^ VehicleControl = gcnew Program("VehicleControl", true, 100);
+	Program^ Camera = gcnew Program("Camera", true, 10000);
+	Program^ Display = gcnew Program("Display", false, 10000);
 	array<Program^>^ moduleList = gcnew array<Program^>{Laser, VehicleControl, GPS, Display, Camera};
-	//array<String^>^ moduleList = gcnew array<String^>{"Laser","VehicleControl","GPS","Display","Camera"};
-	//array<int>^ criticalList = gcnew array<int>(moduleList->Length) {1,1,0,0,1 };
-	//array<int>^ countLimit = gcnew array<int>(moduleList->Length) { 0, 0, 0, 0, 0 };
-	//array<int>^ timeLimit = gcnew array<int>(moduleList->Length) { 10, 10, 20, 20, 10 };
 	array<Process^>^ processList = gcnew array<Process^>(moduleList->Length);
 
-
+	// setup SM
 	SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
 	MonitorDataSMObj.SMCreate();
 	MonitorDataSMObj.SMAccess();
+
+	SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(SM_GPS));
+	GPSDataSMObj.SMCreate();
+	GPSDataSMObj.SMAccess();
 
 	ProcessManagement* dataPointer = (ProcessManagement*)MonitorDataSMObj.pData;
 
@@ -46,19 +46,41 @@ int main() {
 			Console::WriteLine("the process: " + moduleList[i]->getName() + ".exe started");
 		}
 	}
-	dataPointer->Heartbeat.Flags.GPS = 1;
+
+	bool shutdown = false;
 	while (!_kbhit()) {
 		for (int i = 0; i < 5; i++) {
 			if ((dataPointer->Heartbeat.Status >> i) & 1) {
 				dataPointer->Heartbeat.Status &= ~(1UL << i);
+				moduleList[i]->setCount();
+				// reset count
 			}else {
-				
+				int value = moduleList[i]->handelHeartBeat();
+				if (value == 1) {
+					Console::WriteLine("Missing " + moduleList[i]->getName() + ".exe leads to shutdown");
+					shutdown = true;
+					break;
+				}
+				else if (value == 2) {
+					Console::WriteLine("Reopen: " + moduleList[i]->getName() + ".exe");
+					if (processList[i]->HasExited) {
+						processList[i]->Start();
+					}
+					else {
+						processList[i]->Kill();
+						processList[i]->Start();
+					}
+				}
 			}
 		}
-		Thread::Sleep(1000);
+		if (shutdown) {
+			break;
+		}
+		Thread::Sleep(500);
 	}
 
 	dataPointer->Shutdown.Status = 0xFF;
+	Console::WriteLine("Program end");
 	Console::ReadKey();
 	return 0;
 }

@@ -22,7 +22,8 @@ ref class GPS : public UGV_module
 
 public:
 	int connect(String^ hostName, int portNumber) override;
-	int setupSharedMemory(SMObject&);
+	int setupSharedMemory(SMObject&, SMObject&);
+	bool checkHeartBeat();
 	int setupSharedMemory() override;
 	int getData() override;
 	int checkData() override;
@@ -36,6 +37,7 @@ protected:
 	TcpClient^ Client;
 	NetworkStream^ Stream;
 	SM_GPS* dataPtr;
+	ProcessManagement* hearbeatPointer;
 	array<Byte>^ ReadData;
 
 };

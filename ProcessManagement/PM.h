@@ -9,6 +9,8 @@ ref class Program {
 
 	public:
 		Program(String^,bool,int);
+		int handelHeartBeat();
+		void setCount();
 		String^ getName();
 		~Program();
 };

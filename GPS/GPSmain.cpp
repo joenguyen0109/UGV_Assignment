@@ -4,26 +4,41 @@
 
 int main() {
 	Console::WriteLine("Hello world");
-	int PortNumber = 24000;
+	GPS^ gps = gcnew GPS();
+
+	// setup share memory
 	SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(SM_GPS));
 	GPSDataSMObj.SMCreate();
 	GPSDataSMObj.SMAccess();
-	GPS^ gps = gcnew GPS();
-	gps->connect("192.168.1.200", PortNumber);
+
+	SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
+	MonitorDataSMObj.SMCreate();
+	MonitorDataSMObj.SMAccess();
+
+	gps->setupSharedMemory(GPSDataSMObj, MonitorDataSMObj);
+	Threading::Thread::Sleep(100);
+
+
+	int PortNumber = 24000;
+	//gps->connect("192.168.1.200", PortNumber);
 	Threading::Thread::Sleep(1000);
-	gps->setupSharedMemory(GPSDataSMObj);
-	Threading::Thread::Sleep(1000);
+
+
+
 	while (!_kbhit())
 	{
-		gps->getShutdownFlag();
-		gps->setHeartbeat(TRUE);
-		gps->getData();
-		if (gps->checkData() == 1) {
-			gps->sendDataToSharedMemory();
+		if (gps->checkHeartBeat()) {
+			break;
 		}
-		Threading::Thread::Sleep(5000);
+		//gps->getShutdownFlag();
+		//gps->setHeartbeat(TRUE);
+		//gps->getData();
+		//if (gps->checkData() == 1) {
+		//	gps->sendDataToSharedMemory();
+		//}
+		Threading::Thread::Sleep(500);
 	}
-	
+	Console::WriteLine("Program end");
 	Console::ReadKey();
 	return 0;
 }
