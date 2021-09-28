@@ -36,6 +36,7 @@ bool GPS::checkHeartBeat(long timestamp) {
 		int hearBeat = (hearbeatPointer->Heartbeat.Status >> 2) & 1;
 		if (!hearBeat) {
 			hearbeatPointer->Heartbeat.Status |= 1UL << 2;
+			Console::WriteLine("Flip");
 		}
 		else {
 			//check timestamp

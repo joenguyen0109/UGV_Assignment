@@ -13,8 +13,8 @@ using namespace System::Threading;
 int main() {
 	std::cout << "PM \n";
 	Program^ GPS = gcnew Program("GPS", false, 5);
-	Program^ Laser = gcnew Program("Laser", true, 10000);
-	Program^ VehicleControl = gcnew Program("VehicleControl", true, 100);
+	Program^ Laser = gcnew Program("Laser", true, 10);
+	Program^ VehicleControl = gcnew Program("VehicleControl", true, 1000);
 	Program^ Camera = gcnew Program("Camera", true, 10000);
 	Program^ Display = gcnew Program("Display", false, 10000);
 	array<Program^>^ moduleList = gcnew array<Program^>{Laser, VehicleControl, GPS, Display, Camera};

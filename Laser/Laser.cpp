@@ -14,10 +14,29 @@ int Laser::connect(String^ hostName, int portNumber)
 	ReadData = gcnew array<unsigned char>(2500);
 	return 1;
 }
-int Laser::setupSharedMemory(SMObject& GPSDataSMObj)
+int Laser::setupSharedMemory(SMObject& LaserDataSMObj, SMObject& MonitorDataSMObj)
 {
-	dataPtr = (LaserData*)GPSDataSMObj.pData;
+	dataPtr = (SM_Laser*)LaserDataSMObj.pData;
+	hearbeatPointer = (ProcessManagement*)MonitorDataSMObj.pData;
 	return 1;
+}
+bool Laser::checkHeartBeat(long timestamp) {
+	long differenceTimeStamp = timestamp - hearbeatPointer->LifeCounter;
+	if (hearbeatPointer->Shutdown.Status != 0xFF) {
+		int hearBeat = (hearbeatPointer->Heartbeat.Status >> 0) & 1;
+		if (!hearBeat) {
+			hearbeatPointer->Heartbeat.Status |= 1UL << 0;
+			Console::WriteLine("Flip");
+		}
+		else {
+			//check timestamp
+			if (differenceTimeStamp > 5000) {
+				return true;
+			}
+		}
+		return false;
+	}
+	return true;
 }
 int Laser::setupSharedMemory()
 {

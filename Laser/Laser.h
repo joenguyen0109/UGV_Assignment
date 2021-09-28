@@ -11,10 +11,6 @@ using namespace System::Net::Sockets;
 using namespace System::Net;
 using namespace System::Text;
 
-struct LaserData {
-	double X;
-	double Y;
-};
 
 
 ref class Laser : public UGV_module
@@ -23,7 +19,8 @@ ref class Laser : public UGV_module
 
 public:
 	int connect(String^ hostName, int portNumber) override;
-	int setupSharedMemory(SMObject&);
+	int setupSharedMemory(SMObject&, SMObject&);
+	bool checkHeartBeat(long timestamp);
 	int setupSharedMemory() override;
 	int getData() override;
 	int checkData() override;
@@ -38,7 +35,8 @@ protected:
 	TcpClient^ Client;
 	NetworkStream^ Stream;
 	array<Byte>^ ReadData;
-	LaserData* dataPtr;
+	SM_Laser* dataPtr;
+	ProcessManagement* hearbeatPointer;
 
 };
 
