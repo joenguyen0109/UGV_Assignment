@@ -127,6 +127,7 @@
     <ClInclude Include="Vehicle.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\SMObject.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Debug\.NETFramework,Version=v4.6.1.AssemblyAttributes.cpp" />
     <ClCompile Include="Frustum.cpp" />

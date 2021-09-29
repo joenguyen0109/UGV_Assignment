@@ -22,7 +22,6 @@ int main() {
 	Threading::Thread::Sleep(1000);
 
 	// timeStamp
-	double timeStamp;
 	__int64 frequency, counter;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 

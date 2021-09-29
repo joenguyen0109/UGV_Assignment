@@ -38,6 +38,9 @@
 #include "Messages.hpp"
 #include "HUD.hpp"
 
+#include <UGV_module.h>
+#include <smstructs.h>
+
 void display();
 void reshape(int width, int height);
 void idle();
@@ -50,7 +53,7 @@ void special_keyup(int keycode, int x, int y);
 void mouse(int button, int state, int x, int y);
 void dragged(int x, int y);
 void motion(int x, int y);
-
+bool checkHeartBeat(long timestamp);
 using namespace std;
 using namespace scos;
 
@@ -64,8 +67,16 @@ Vehicle * vehicle = NULL;
 double speed = 0;
 double steering = 0;
 
+// My Code for share memory
+SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
+__int64 frequency, counter;
+
+
 //int _tmain(int argc, _TCHAR* argv[]) {
 int main(int argc, char ** argv) {
+	MonitorDataSMObj.SMCreate();
+	MonitorDataSMObj.SMAccess();
+	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 
 	const int WINDOW_WIDTH = 800;
 	const int WINDOW_HEIGHT = 600;
@@ -107,6 +118,7 @@ int main(int argc, char ** argv) {
 		delete vehicle;
 	}
 
+
 	return 0;
 }
 
@@ -115,7 +127,8 @@ void display() {
 	// -------------------------------------------------------------------------
 	//  This method is the main draw routine. 
 	// -------------------------------------------------------------------------
-
+	
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -142,8 +155,36 @@ void display() {
 
 	// draw HUD
 	HUD::Draw();
-
 	glutSwapBuffers();
+
+	QueryPerformanceCounter((LARGE_INTEGER*)&counter);
+	long timestamp = (long)counter / (long)frequency * 1000;
+
+	if (checkHeartBeat(timestamp)) {
+		exit(0);
+	}
+};
+
+bool checkHeartBeat(long timestamp) {
+
+	ProcessManagement* hearbeatPointer = (ProcessManagement*)MonitorDataSMObj.pData;
+
+	long differenceTimeStamp = timestamp - hearbeatPointer->LifeCounter;
+	if (hearbeatPointer->Shutdown.Status != 0xFF) {
+		int hearBeat = (hearbeatPointer->Heartbeat.Status >> 3) & 1;
+		if (!hearBeat) {
+			hearbeatPointer->Heartbeat.Status |= 1UL << 3;
+			Console::WriteLine("Flip");
+		}
+		else {
+			//check timestamp
+			if (differenceTimeStamp > 5000) {
+				return true;
+			}
+		}
+		return false;
+	}
+	return true;
 };
 
 void reshape(int width, int height) {
