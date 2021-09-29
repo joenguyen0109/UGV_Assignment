@@ -49,12 +49,15 @@ int main()
 	Stream->Read(ReadData, 0, ReadData->Length);
 	ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
 	Console::WriteLine(ResponseData);
+
+	String^ AskScan2 = gcnew String("sRN LMDscandata");
+	SendData = System::Text::Encoding::ASCII->GetBytes(AskScan2);
 	//Loop
 	while (!_kbhit())
 	{
 		// Write command asking for data
-		AskScan = gcnew String("sRN LMDscandata");
-		SendData = System::Text::Encoding::ASCII->GetBytes(AskScan);
+
+		
 		Stream->WriteByte(0x02);
 		Stream->Write(SendData, 0, SendData->Length);
 		Stream->WriteByte(0x03);
