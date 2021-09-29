@@ -13,15 +13,23 @@
 
 void display();
 void idle();
-
+bool checkHeartBeat(long timestamp);
 GLuint tex;
 
 //ZMQ settings
 zmq::context_t context(1);
 zmq::socket_t subscriber(context, ZMQ_SUB);
 
+// My Code for share memory
+SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
+__int64 frequency, counter;
+
 int main(int argc, char** argv)
 {
+	MonitorDataSMObj.SMCreate();
+	MonitorDataSMObj.SMAccess();
+	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
+
 	//Define window size
 	const int WINDOW_WIDTH = 800;
 	const int WINDOW_HEIGHT = 600;
@@ -62,7 +70,39 @@ void display()
 	glTexCoord2f(0, 0); glVertex2f(-1, 1);
 	glEnd();
 	glutSwapBuffers();
+
+	QueryPerformanceCounter((LARGE_INTEGER*)&counter);
+	long timestamp = (long)counter / (long)frequency * 1000;
+
+	if (checkHeartBeat(timestamp)) {
+		exit(0);
+	}
 }
+
+bool checkHeartBeat(long timestamp) {
+
+	ProcessManagement* hearbeatPointer = (ProcessManagement*)MonitorDataSMObj.pData;
+
+	long differenceTimeStamp = timestamp - hearbeatPointer->LifeCounter;
+	if (hearbeatPointer->Shutdown.Status != 0xFF) {
+		int hearBeat = (hearbeatPointer->Heartbeat.Status >> 4) & 1;
+		if (!hearBeat) {
+			hearbeatPointer->Heartbeat.Status |= 1UL << 4;
+			Console::WriteLine("Flip");
+		}
+		else {
+			//check timestamp
+			if (differenceTimeStamp > 5000) {
+				return true;
+			}
+		}
+		return false;
+	}
+	return true;
+};
+
+
+
 void idle()
 {
 

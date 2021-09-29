@@ -15,7 +15,7 @@ int main() {
 	Program^ GPS = gcnew Program("GPS", false, 5);
 	Program^ Laser = gcnew Program("Laser", true, 10);
 	Program^ VehicleControl = gcnew Program("VehicleControl", true, 1000);
-	Program^ Camera = gcnew Program("Camera", true, 10000);
+	Program^ Camera = gcnew Program("Camera", true, 10);
 	Program^ Display = gcnew Program("Display", false, 10);
 	array<Program^>^ moduleList = gcnew array<Program^>{Laser, VehicleControl, GPS, Display, Camera};
 	array<Process^>^ processList = gcnew array<Process^>(moduleList->Length);
