@@ -20,7 +20,7 @@ int main()
 	// String command to ask for Channel 1 analogue voltage from the PLC
 	// These command are available on Galil RIO47122 command reference manual
 	// available online
-	String^ AskScan = gcnew String("sRN LMDscandata");
+	String^ AskScan = gcnew String("5253838\n");
 	// String to store received data for display
 	String^ ResponseData;
 
@@ -28,8 +28,8 @@ int main()
 	Client = gcnew TcpClient("192.168.1.200", PortNumber);
 	// Configure connection
 	Client->NoDelay = true;
-	Client->ReceiveTimeout = 500;//ms
-	Client->SendTimeout = 500;//ms
+	Client->ReceiveTimeout = 5000;//ms
+	Client->SendTimeout = 5000;//ms
 	Client->ReceiveBufferSize = 1024;
 	Client->SendBufferSize = 1024;
 
@@ -44,11 +44,17 @@ int main()
 	// can use it to read and write
 	NetworkStream^ Stream = Client->GetStream();
 
-
+	Stream->Write(SendData, 0, SendData->Length);
+	System::Threading::Thread::Sleep(10);
+	Stream->Read(ReadData, 0, ReadData->Length);
+	ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
+	Console::WriteLine(ResponseData);
 	//Loop
 	while (!_kbhit())
 	{
 		// Write command asking for data
+		AskScan = gcnew String("sRN LMDscandata");
+		SendData = System::Text::Encoding::ASCII->GetBytes(AskScan);
 		Stream->WriteByte(0x02);
 		Stream->Write(SendData, 0, SendData->Length);
 		Stream->WriteByte(0x03);
@@ -60,6 +66,7 @@ int main()
 		ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
 		// Print the received string on the screen
 		Console::WriteLine(ResponseData);
+
 	}
 
 	Stream->Close();
