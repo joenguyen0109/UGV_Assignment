@@ -73,7 +73,11 @@ int Laser::getData()
 
 	Stream->Read(ReadData, 0, ReadData->Length);
 	String  ^ ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
-	Console::WriteLine(ResponseData);
+	//Console::WriteLine(ResponseData);
+	array<String^>^ data = ResponseData->Split(' ');
+	Console::WriteLine("Start Angle: {0:F}\n", Convert::ToInt32(data[23], 16));
+	Console::WriteLine("Angular Step: {0:F}\n", Convert::ToUInt16(data[24], 16)/10000.0);
+	Console::WriteLine("Number of data: {0:F}\n", Convert::ToUInt16(data[25], 16));
 	return 1;
 }
 int Laser::checkData()
@@ -85,7 +89,17 @@ int Laser::checkData()
 int Laser::sendDataToSharedMemory()
 {
 	// YOUR CODE HERE
-
+	String^ ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
+	Console::WriteLine(ResponseData);
+	array<String^>^ data = ResponseData->Split(' ');
+	UInt16 numberOfData = Convert::ToUInt16(data[25], 16);
+	UInt16 resolution = Convert::ToUInt16(data[24], 16);
+	for (int i = 0; i < numberOfData; i++) {
+		UInt16 output = Convert::ToUInt16(data[26 + i], 16);
+		double angle = (double) (i*resolution) * (Math::PI / 180);
+		dataPtr->x[i] = (double)output * Math::Sin(angle);
+		dataPtr->y[i] = (double)output * Math::Cos(angle);
+	}
 	return 1;
 }
 bool Laser::getShutdownFlag()

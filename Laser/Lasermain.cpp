@@ -31,11 +31,11 @@ int main() {
 
 			QueryPerformanceCounter((LARGE_INTEGER*)&counter);
 			long timestamp = (long)counter / (long)frequency * 1000;
-			//if (laser->checkHeartBeat(timestamp)) {
-			//	break;
-			//}
-			/*	laser->getShutdownFlag();
-				laser->setHeartbeat(TRUE);*/
+			if (laser->checkHeartBeat(timestamp)) {
+				break;
+			}
+			laser->getShutdownFlag();
+			laser->setHeartbeat(TRUE);
 			laser->sendData();
 			laser->getData();
 			if (laser->checkData() == 1) {
