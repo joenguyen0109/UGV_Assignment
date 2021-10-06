@@ -64,13 +64,14 @@ int prev_mouse_x = -1;
 int prev_mouse_y = -1;
 
 // vehicle control related variables
-Vehicle * vehicle = NULL;
+Vehicle* vehicle = NULL;
 double speed = 0;
 double steering = 0;
 
 // My Code for share memory
 SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
 SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(SM_GPS));
+SMObject LaserDataSMObj(_TEXT("LaserData"), sizeof(SM_Laser));
 __int64 frequency, counter;
 
 
@@ -80,6 +81,8 @@ int main(int argc, char ** argv) {
 	MonitorDataSMObj.SMAccess();
 	GPSDataSMObj.SMCreate();
 	GPSDataSMObj.SMAccess();
+	LaserDataSMObj.SMCreate();
+	LaserDataSMObj.SMAccess();
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 
 	const int WINDOW_WIDTH = 800;
@@ -153,7 +156,8 @@ void display() {
 	// draw my vehicle
 	if (vehicle != NULL) {
 		vehicle->draw();
-
+		SM_Laser* laserPointer = (SM_Laser*)LaserDataSMObj.pData;
+		vehicle->drawLaser(laserPointer);
 	}
 
 	SM_GPS* GPSPointer = (SM_GPS*)GPSDataSMObj.pData;
@@ -167,9 +171,9 @@ void display() {
 	QueryPerformanceCounter((LARGE_INTEGER*)&counter);
 	long timestamp = (long)counter / (long)frequency * 1000;
 
-	//if (checkHeartBeat(timestamp)) {
-	//	exit(0);
-	//}
+	if (checkHeartBeat(timestamp)) {
+		exit(0);
+	}
 };
 
 bool checkHeartBeat(long timestamp) {

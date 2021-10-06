@@ -98,7 +98,7 @@ int Laser::sendDataToSharedMemory()
 		UInt16 output = Convert::ToUInt16(data[26 + i], 16);
 		double angle = (double) (i*resolution) * (Math::PI / 180);
 		dataPtr->x[i] = (double)output * Math::Sin(angle);
-		dataPtr->y[i] = (double)output * Math::Cos(angle);
+		dataPtr->y[i] =	-(double)output * Math::Cos(angle);
 	}
 	return 1;
 }

@@ -30,11 +30,11 @@ int main() {
 	{
 		QueryPerformanceCounter((LARGE_INTEGER*)&counter);
 		long timestamp = (long)counter / (long)frequency * 1000;
-		//if (gps->checkHeartBeat(timestamp)) {
-		//	break;
-		//}
-		//gps->getShutdownFlag();
-		//gps->setHeartbeat(TRUE);
+		if (gps->checkHeartBeat(timestamp)) {
+			break;
+		}
+		gps->getShutdownFlag();
+		gps->setHeartbeat(TRUE);
 		gps->getData();
 		if (gps->checkData() == 1) {
 			gps->sendDataToSharedMemory();

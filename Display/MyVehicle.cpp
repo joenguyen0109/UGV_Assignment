@@ -135,16 +135,19 @@ void drawUGV(double steerAngle)
 MyVehicle::MyVehicle()
 {
 }
-void MyVehicle::drawLaser() {
+void MyVehicle::drawLaser(SM_Laser* laserPointer) {
 	glPushMatrix();
-	glLineWidth(1.5);
-	for (int i = 44; i < 225; i++) {
-		glBegin(GL_LINES);
-		glVertex3f(0, 0, 0);
-		//glVertex3f(*(xData + i) / 1000, 0, -*(yData + i) / 1000);
-		glEnd();
+	glLineWidth(2);
+	glBegin(GL_LINES);
+	for (int i = 0; i < 361; i++) {
+		glVertex3f(10, 2, 0.0f);
+		glVertex3f(*(laserPointer->x + i)/1000 ,0, *(laserPointer->y + i)/1000);
+		
 	}
+	glEnd();
 	glPopMatrix();
+
+	
 }
 void MyVehicle::draw()
 {

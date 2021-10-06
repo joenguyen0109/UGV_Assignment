@@ -117,7 +117,6 @@
   <ItemGroup>
     <ClCompile Include="..\SMObject.cpp" />
     <ClCompile Include="PMmain.cpp" />
-    <ClCompile Include="ProcessManagement.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>
   <ItemGroup>

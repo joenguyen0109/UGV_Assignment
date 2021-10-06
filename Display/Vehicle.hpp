@@ -6,6 +6,7 @@
 #include "Shape.hpp"
 #include "VectorMaths.hpp"
 #include <vector>
+#include <smstructs.h>
 
 class Vehicle : public Shape {
 public:
@@ -17,6 +18,7 @@ public:
 	virtual void update(double speed_, double steering_, double dt);
 
 	virtual void draw() = 0;
+	virtual void drawLaser(SM_Laser*) = 0;
 
 	static const int MAX_FORWARD_SPEED_MPS = 1;
 	static const int MAX_BACKWARD_SPEED_MPS = -1;
