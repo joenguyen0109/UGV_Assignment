@@ -6,7 +6,7 @@ int Laser::connect(String^ hostName, int portNumber)
 	Client = gcnew TcpClient(hostName, portNumber);
 	// Configure connection
 	Client->NoDelay = true;
-	Client->ReceiveTimeout = 500;//ms
+	Client->ReceiveTimeout = 5000;//ms
 	Client->SendTimeout = 500;//ms
 	Client->ReceiveBufferSize = 1024;
 	Client->SendBufferSize = 1024;
@@ -52,14 +52,28 @@ void Laser::sendData() {
 	Stream->WriteByte(0x02);
 	Stream->Write(SendData, 0, SendData->Length);
 	Stream->WriteByte(0x03);
+	System::Threading::Thread::Sleep(100);
+}
+
+int Laser::askAuth()
+{
+	array<unsigned char>^ SendData = gcnew array<unsigned char>(16);
+	String^ AskScan = gcnew String("5253838\n");
+	SendData = System::Text::Encoding::ASCII->GetBytes(AskScan);
+	Stream->Write(SendData, 0, SendData->Length);
 	System::Threading::Thread::Sleep(10);
+	Stream->Read(ReadData, 0, ReadData->Length);
+	String ^ ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
+	Console::WriteLine(ResponseData);
+	return 1;
 }
 
 int Laser::getData()
 {
 
 	Stream->Read(ReadData, 0, ReadData->Length);
-	Console::WriteLine(BitConverter::ToString(ReadData));
+	String  ^ ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
+	Console::WriteLine(ResponseData);
 	return 1;
 }
 int Laser::checkData()

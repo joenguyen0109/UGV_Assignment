@@ -28,6 +28,7 @@ public:
 	bool getShutdownFlag() override;
 	int setHeartbeat(bool heartbeat) override;
 	void sendData();
+	int askAuth();
 	~Laser();
 
 protected:

@@ -53,6 +53,8 @@ int main()
 	String^ AskScan2 = gcnew String("sRN LMDscandata");
 	SendData = System::Text::Encoding::ASCII->GetBytes(AskScan2);
 	//Loop
+
+	array<System::String^>^ data;
 	while (!_kbhit())
 	{
 		// Write command asking for data
@@ -68,16 +70,16 @@ int main()
 		// Convert incoming data from an array of unsigned char bytes to an ASCII string
 		ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
 		// Print the received string on the screen
-		Console::WriteLine(ResponseData);
+		
 
+		data = ResponseData->Split(' ');
+		Console::WriteLine(data[23]);
 	}
 
 	Stream->Close();
 	Client->Close();
 
 	Console::ReadKey();
-	Console::ReadKey();
-
 
 	return 0;
 }
