@@ -138,7 +138,7 @@ void HUD::DrawGauge(double x, double y, double r, double min, double max, double
 	glPopMatrix();
 }
 
-void HUD::Draw()
+void HUD::Draw(SM_GPS * pointer)
 {
 	Camera::get()->switchTo2DDrawing();
 	int winWidthOff = (Camera::get()->getWindowWidth() - 800) * .5;
@@ -150,7 +150,15 @@ void HUD::Draw()
 		DrawGauge(200+winWidthOff, 280, 210, -1, 1, vehicle->getSpeed(), "Speed");
 		glColor3f(1, 1, 0);
 		DrawGauge(600+winWidthOff, 280, 210, -40, 40, vehicle->getSteering(), "Steer");
-		RenderString("hello", 100, 100, GLUT_BITMAP_HELVETICA_10);
+
+		marshal_context^ context = gcnew marshal_context();
+		const char* north = context->marshal_as<const char*>(pointer->northing.ToString());
+		const char* east = context->marshal_as<const char*>(pointer->easting.ToString());
+		const char* height = context->marshal_as<const char*>(pointer->height.ToString());
+
+		RenderString(north, 100, 30, GLUT_BITMAP_HELVETICA_10);
+		RenderString(east, 250, 30, GLUT_BITMAP_HELVETICA_10);
+		RenderString(height, 400, 30, GLUT_BITMAP_HELVETICA_10);
 	}
 
 	Camera::get()->switchTo3DDrawing();

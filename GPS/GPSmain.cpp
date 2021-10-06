@@ -18,7 +18,7 @@ int main() {
 
 
 	int PortNumber = 24000;
-	//gps->connect("192.168.1.200", PortNumber);
+	gps->connect("192.168.1.200", PortNumber);
 	Threading::Thread::Sleep(1000);
 
 	// timeStamp
@@ -30,15 +30,15 @@ int main() {
 	{
 		QueryPerformanceCounter((LARGE_INTEGER*)&counter);
 		long timestamp = (long)counter / (long)frequency * 1000;
-		if (gps->checkHeartBeat(timestamp)) {
-			break;
-		}
+		//if (gps->checkHeartBeat(timestamp)) {
+		//	break;
+		//}
 		//gps->getShutdownFlag();
 		//gps->setHeartbeat(TRUE);
-		//gps->getData();
-		//if (gps->checkData() == 1) {
-		//	gps->sendDataToSharedMemory();
-		//}
+		gps->getData();
+		if (gps->checkData() == 1) {
+			gps->sendDataToSharedMemory();
+		}
 		Threading::Thread::Sleep(500);
 	}
 	Console::WriteLine("Program end");

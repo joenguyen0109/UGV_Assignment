@@ -41,6 +41,7 @@
 #include <UGV_module.h>
 #include <smstructs.h>
 
+
 void display();
 void reshape(int width, int height);
 void idle();
@@ -69,6 +70,7 @@ double steering = 0;
 
 // My Code for share memory
 SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
+SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(SM_GPS));
 __int64 frequency, counter;
 
 
@@ -76,6 +78,8 @@ __int64 frequency, counter;
 int main(int argc, char ** argv) {
 	MonitorDataSMObj.SMCreate();
 	MonitorDataSMObj.SMAccess();
+	GPSDataSMObj.SMCreate();
+	GPSDataSMObj.SMAccess();
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 
 	const int WINDOW_WIDTH = 800;
@@ -152,18 +156,20 @@ void display() {
 
 	}
 
+	SM_GPS* GPSPointer = (SM_GPS*)GPSDataSMObj.pData;
+
 
 	// draw HUD
-	HUD::Draw();
+	HUD::Draw(GPSPointer);
 	glutSwapBuffers();
 
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&counter);
 	long timestamp = (long)counter / (long)frequency * 1000;
 
-	if (checkHeartBeat(timestamp)) {
-		exit(0);
-	}
+	//if (checkHeartBeat(timestamp)) {
+	//	exit(0);
+	//}
 };
 
 bool checkHeartBeat(long timestamp) {
