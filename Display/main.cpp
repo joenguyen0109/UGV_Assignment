@@ -157,6 +157,7 @@ void display() {
 	HUD::Draw();
 	glutSwapBuffers();
 
+
 	QueryPerformanceCounter((LARGE_INTEGER*)&counter);
 	long timestamp = (long)counter / (long)frequency * 1000;
 

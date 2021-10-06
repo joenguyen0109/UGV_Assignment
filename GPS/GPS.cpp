@@ -60,9 +60,7 @@ int GPS::getData()
 	Console::WriteLine(BitConverter::ToDouble(ReadData, 24 + 28));
 	Console::WriteLine(BitConverter::ToDouble(ReadData, 32 + 28));
 	unsigned long crc = BitConverter::ToUInt32(ReadData, 108);
-	swap(crc);
-	std::cout << std::hex << crc << std::endl;
-	Console::WriteLine("-------------");
+	std::cout << crc << std::endl;
 	return 1;
 }
 int GPS::checkData()
@@ -73,6 +71,8 @@ int GPS::checkData()
 	}
 	unsigned long crc = CalculateBlockCRC32(108, data);
 	if (crc == BitConverter::ToUInt32(ReadData, 108)) {
+		std::cout << crc << std::endl;
+		Console::WriteLine("-------------");
 		return 1;
 	}
 	return 0;
