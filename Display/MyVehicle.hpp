@@ -8,6 +8,7 @@ class MyVehicle : public Vehicle
 {
 public:
 	MyVehicle();
+	void drawLaser();
 	virtual void draw();
 };
 
