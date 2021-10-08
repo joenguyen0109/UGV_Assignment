@@ -171,9 +171,9 @@ void display() {
 	QueryPerformanceCounter((LARGE_INTEGER*)&counter);
 	long timestamp = (long)counter / (long)frequency * 1000;
 
-	if (checkHeartBeat(timestamp)) {
-		exit(0);
-	}
+	//if (checkHeartBeat(timestamp)) {
+	//	exit(0);
+	//}
 };
 
 bool checkHeartBeat(long timestamp) {

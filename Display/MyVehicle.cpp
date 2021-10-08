@@ -138,13 +138,15 @@ MyVehicle::MyVehicle()
 void MyVehicle::drawLaser(SM_Laser* laserPointer) {
 	glPushMatrix();
 	glLineWidth(2);
-	glBegin(GL_LINES);
+
 	for (int i = 0; i < 361; i++) {
-		glVertex3f(10, 2, 0.0f);
-		glVertex3f(*(laserPointer->x + i)/1000 ,0, *(laserPointer->y + i)/1000);
+		glBegin(GL_LINES);
+		glVertex3f(getX(), 2, getZ());
+		glVertex3f(*(laserPointer->x + i)/1000 + getX() ,0, *(laserPointer->y + i)/1000 + getZ());
+		glEnd();
 		
 	}
-	glEnd();
+	
 	glPopMatrix();
 
 	
