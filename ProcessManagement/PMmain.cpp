@@ -35,12 +35,12 @@ int main() {
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 
 	for (int i = 0; i < moduleList->Length; i++) {
-		if (Process::GetProcessesByName(moduleList[i]->getName())->Length == 0) {
+		//if (Process::GetProcessesByName(moduleList[i]->getName())->Length == 0) {
 			processList[i] = gcnew Process;
 			processList[i]->StartInfo->FileName = moduleList[i]->getName();
 			processList[i]->Start();
 			Console::WriteLine("the process: " + moduleList[i]->getName() + ".exe started");
-		}
+		//}
 	}
 
 	bool shutdown = false;
