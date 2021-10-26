@@ -9,7 +9,10 @@ int main() {
 	laser->connect("192.168.1.200", PortNumber);
 	Threading::Thread::Sleep(500);
 
-
+	SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
+	MonitorDataSMObj.SMCreate();
+	MonitorDataSMObj.SMAccess();
+	laser->setupSharedMemory(MonitorDataSMObj);
 
 
 	if (laser->askAuth()) {

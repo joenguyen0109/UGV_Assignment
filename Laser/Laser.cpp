@@ -14,17 +14,13 @@ int Laser::connect(String^ hostName, int portNumber)
 	ReadData = gcnew array<unsigned char>(2500);
 	return 1;
 }
-int Laser::setupSharedMemory(SMObject& LaserDataSMObj, SMObject& MonitorDataSMObj)
+int Laser::setupSharedMemory( SMObject& MonitorDataSMObj)
 {
-	dataPtr = (SM_Laser*)LaserDataSMObj.pData;
 	hearbeatPointer = (ProcessManagement*)MonitorDataSMObj.pData;
 	return 1;
 }
 bool Laser::checkHeartBeat(long timestamp) {
-	SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
-	MonitorDataSMObj.SMCreate();
-	MonitorDataSMObj.SMAccess();
-	hearbeatPointer = (ProcessManagement*)MonitorDataSMObj.pData;
+
 	long differenceTimeStamp = timestamp - hearbeatPointer->LifeCounter;
 	if (hearbeatPointer->Shutdown.Status != 0xFF) {
 		int hearBeat = (hearbeatPointer->Heartbeat.Status >> 0) & 1;

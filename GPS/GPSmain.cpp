@@ -11,7 +11,10 @@ int main() {
 	int PortNumber = 24000;
 	gps->connect("192.168.1.200", PortNumber);
 	Threading::Thread::Sleep(1000);
-
+	SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
+	MonitorDataSMObj.SMCreate();
+	MonitorDataSMObj.SMAccess();
+	gps->setupSharedMemory(MonitorDataSMObj);
 	// timeStamp
 	__int64 frequency, counter;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
