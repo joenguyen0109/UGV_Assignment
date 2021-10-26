@@ -74,13 +74,31 @@ void VehicleControl::sendData()
 
 }
 
+void VehicleControl::sendData(double Steering, double Speed, unsigned int flag)
+{
+	array<unsigned char>^ data = gcnew array<unsigned char>(50);
+	array<unsigned char>^ ReadData = gcnew array<unsigned char>(100);
+	Steering = -Steering;
+	String^ SendControl = gcnew String("# " + Steering.ToString("f2") + " "
+		+ Speed.ToString("f2") + " " + flag + " #");
+	Console::WriteLine(SendControl);
+	data = System::Text::Encoding::ASCII->GetBytes(SendControl);
+	Stream->WriteByte(0x02);
+	Stream->Write(data, 0, data->Length);
+	Stream->WriteByte(0x03);
+	System::Threading::Thread::Sleep(100);
+	//Stream->Read(ReadData, 0, ReadData->Length);
+	//String^ ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
+	//Console::WriteLine(ResponseData);
+}
+
 int VehicleControl::askAuth()
 {
-	array<unsigned char>^ SendData = gcnew array<unsigned char>(16);
-	String^ AskScan = gcnew String("5253838\n");
-	SendData = System::Text::Encoding::ASCII->GetBytes(AskScan);
-	Stream->Write(SendData, 0, SendData->Length);
-	System::Threading::Thread::Sleep(10);
+	array<unsigned char>^  data = gcnew array<unsigned char>(50);
+	array<unsigned char>^ ReadData = gcnew array<unsigned char>(100);
+	System::String^ Authen = gcnew System::String("5253838\n");
+	data = System::Text::Encoding::ASCII->GetBytes(Authen);
+	Stream->Write(data, 0, data->Length);
 	Stream->Read(ReadData, 0, ReadData->Length);
 	String^ ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
 	Console::WriteLine(ResponseData);

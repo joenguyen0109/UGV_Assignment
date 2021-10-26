@@ -27,7 +27,7 @@ int main()
 		// timeStamp
 		__int64 frequency, counter;
 		QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
-
+		int i = 0;
 		while (!_kbhit())
 		{
 
@@ -36,7 +36,8 @@ int main()
 			if (vc->checkHeartBeat(timestamp)) {
 				break;
 			}
-
+			vc->sendData(40,0.5,i);
+			i |= i;
 			Threading::Thread::Sleep(100);
 		}
 	}

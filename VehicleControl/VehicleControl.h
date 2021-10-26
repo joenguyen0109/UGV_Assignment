@@ -28,6 +28,7 @@ public:
 	bool getShutdownFlag() override;
 	int setHeartbeat(bool heartbeat) override;
 	void sendData();
+	void sendData(double Steering, double Speed, unsigned int flag);
 	int askAuth();
 	~VehicleControl();
 
