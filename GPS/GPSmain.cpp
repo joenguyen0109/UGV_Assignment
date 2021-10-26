@@ -6,15 +6,6 @@ int main() {
 	Console::WriteLine("Hello world");
 	GPS^ gps = gcnew GPS();
 
-	// setup share memory
-	SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(SM_GPS));
-	GPSDataSMObj.SMCreate();
-	GPSDataSMObj.SMAccess();
-	SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
-	MonitorDataSMObj.SMCreate();
-	MonitorDataSMObj.SMAccess();
-	gps->setupSharedMemory(GPSDataSMObj, MonitorDataSMObj);
-	Threading::Thread::Sleep(100);
 
 
 	int PortNumber = 24000;

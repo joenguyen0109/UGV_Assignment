@@ -31,6 +31,11 @@ int GPS::setupSharedMemory(SMObject & GPSDataSMObj, SMObject& MonitorDataSMObj)
 }
 
 bool GPS::checkHeartBeat(long timestamp) {
+	SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
+	MonitorDataSMObj.SMCreate();
+	MonitorDataSMObj.SMAccess();
+	hearbeatPointer = (ProcessManagement*)MonitorDataSMObj.pData;
+
 	long differenceTimeStamp = timestamp - hearbeatPointer->LifeCounter;
 	if (hearbeatPointer->Shutdown.Status != 0xFF) {
 		int hearBeat = (hearbeatPointer->Heartbeat.Status >> 2) & 1;
@@ -79,6 +84,10 @@ int GPS::checkData()
 }
 int GPS::sendDataToSharedMemory() 
 {
+	SMObject GPSDataSMObj(_TEXT("GPSData"), sizeof(SM_GPS));
+	GPSDataSMObj.SMCreate();
+	GPSDataSMObj.SMAccess();
+	dataPtr = (SM_GPS*)GPSDataSMObj.pData;
 	// YOUR CODE HERE
 	dataPtr->northing = BitConverter::ToDouble(ReadData, 16 + 28);
 	dataPtr->easting = BitConverter::ToDouble(ReadData, 24 + 28);

@@ -3,15 +3,6 @@
 int main() {
 	Console::WriteLine("Hello world");
 	Laser^ laser = gcnew Laser();
-	
-	SMObject LaserDataSMObj(_TEXT("LaserData"), sizeof(SM_Laser));
-	LaserDataSMObj.SMCreate();
-	LaserDataSMObj.SMAccess();
-	SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
-	MonitorDataSMObj.SMCreate();
-	MonitorDataSMObj.SMAccess();
-	laser->setupSharedMemory(LaserDataSMObj, MonitorDataSMObj);
-	Threading::Thread::Sleep(500);
 
 
 	int PortNumber = 23000;
@@ -34,8 +25,6 @@ int main() {
 			if (laser->checkHeartBeat(timestamp)) {
 				break;
 			}
-			//laser->getShutdownFlag();
-			//laser->setHeartbeat(TRUE);
 			laser->sendData();
 			laser->getData();
 			if (laser->checkData() == 1) {

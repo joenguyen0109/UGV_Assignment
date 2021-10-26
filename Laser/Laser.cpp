@@ -21,6 +21,10 @@ int Laser::setupSharedMemory(SMObject& LaserDataSMObj, SMObject& MonitorDataSMOb
 	return 1;
 }
 bool Laser::checkHeartBeat(long timestamp) {
+	SMObject MonitorDataSMObj(_TEXT("MonitorData"), sizeof(ProcessManagement));
+	MonitorDataSMObj.SMCreate();
+	MonitorDataSMObj.SMAccess();
+	hearbeatPointer = (ProcessManagement*)MonitorDataSMObj.pData;
 	long differenceTimeStamp = timestamp - hearbeatPointer->LifeCounter;
 	if (hearbeatPointer->Shutdown.Status != 0xFF) {
 		int hearBeat = (hearbeatPointer->Heartbeat.Status >> 0) & 1;
@@ -89,6 +93,11 @@ int Laser::checkData()
 int Laser::sendDataToSharedMemory()
 {
 	// YOUR CODE HERE
+	SMObject LaserDataSMObj(_TEXT("LaserData"), sizeof(SM_Laser));
+	LaserDataSMObj.SMCreate();
+	LaserDataSMObj.SMAccess();
+	dataPtr = (SM_Laser*)LaserDataSMObj.pData;
+
 	String^ ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
 	array<String^>^ data = ResponseData->Split(' ');
 	UInt16 numberOfData = Convert::ToUInt16(data[25], 16);
